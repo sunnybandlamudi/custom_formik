@@ -14,57 +14,252 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Using Custom Formik Hook
 
-### `npm run build`
+```
+  const formik = useCustomFormik({
+        initialState: {
+            "username": "sample",
+            "email": "",
+        },
+        onSubmit: submit,
+        validate: validate
+    })
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Usage 1
+---
+Separate Handlers
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+<div className="form-field">
+    <label htmlFor="username" className="form-label fw-bold">Username</label>
+    <input type="text" id="username" className="form-control "
+           name="username"
+           onChange={formik.handleChange}
+           onBlur={formik.handleBlur}
+           value={formik.values.username}
+    />
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    {(formik.errors?.username && formik.touched?.username) ? <div>Username Error </div> : ""}
+</div>
 
-### `npm run eject`
+```
+#### Usage 2
+---
+Combining Handlers
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+<div className="form-field">
+  <label htmlFor="email" className="form-label fw-bold">Email</label>
+  <input type="text" id="email" className="form-control" name="email"
+  {...formik.getProps('email')} />
+</div>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Displaying Error
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
 
-## Learn More
+{(formik.errors?.email && formik.touched?.email) ? <div className="text-danger">Email Error </div> : ""}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Image
 
-### Code Splitting
+![image](./public/images/img-1.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Using CFormik Tag
 
-### Analyzing the Bundle Size
+CFormik - Main tag which handles validate and submit handlers
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+CForm - Contains all the custom fields and labels.
 
-### Making a Progressive Web App
+CFeild - Used to handle different states.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+CErrorMessage - Used to display error message.
 
-### Advanced Configuration
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+<CFormik    
+            initailValues={initialValues} 
+            onSubmit={submit} validate={validate} 
+            validateOnChange={false}>
 
-### Deployment
+    <CForm>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+          <div className="form-field">
 
-### `npm run build` fails to minify
+                   <label htmlFor="email" className="form-label fw-bold">Email</label>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+                   <CFeild type="email" id="email" name="email" className="form-control"></CFeild>
+
+<!--------------------------------- Error Message -------------------------------------->
+
+                   <CErrorMessage name="email"></CErrorMessage>
+          </div>
+
+    </CForm>
+
+</CFormik>
+
+```
+
+### CFeild Usages
+
+#### Usage 1
+
+```
+
+<CFeild type="email" id="email" name="email" className="form-control"></CFeild>
+
+```
+
+#### Usage 2
+
+```
+
+<CFeild type="text" id="username" name="username" className="form-control">
+
+  { (props) => {
+
+ return (
+    <input
+      type="text"
+      id="username"
+      className="form-control"
+      name="{props.name}"
+      {...props.form.getProps(props.name)}
+  />
+  ) } }
+
+</CFeild>
+
+```
+
+#### Usage 3 - Array Usage
+
+```
+
+<CFeild
+        type="text"
+        id="phone_1"
+        placeholder="Phone 1"
+        name="phone[0]"
+        className="form-control"
+></CFeild>
+
+<CFeild
+        type="text"
+        id="phone_2"
+        placeholder="Phone 2"
+        name="phone[1]"
+        className="form-control"
+></CFeild>
+
+```
+
+## Error Message
+
+CErrorMessage - Used to display different error messages.
+
+
+#### Usage 1 - Display default message
+
+```
+
+<CErrorMessage name="email"></CErrorMessage>
+
+```
+
+
+#### Usage 2 - Displaying error message in component.
+
+```
+
+<CErrorMessage name="username" component="div"></CErrorMessage>
+
+```
+
+#### Usage 3 - Displaying error message in with custom component.
+
+```
+
+<CErrorMessage name="username" component="{TextError}"></CErrorMessage>
+
+```
+
+#### Usage 4 - Displaying custom message with component.
+
+
+```
+
+<CErrorMessage name="username">
+
+                    { (errorMsg) => { 
+                        return (
+                                <div className="error">{errorMsg}</div>
+                            ) 
+                    } }
+</CErrorMessage>
+
+
+```
+
+![image](./public/images/img-2.png)
+
+
+## Form Array
+
+CFormArray - Used to create array components.
+
+```
+
+<CFormArray name="skills">
+    {
+        (props) => {
+
+            const {values, push, remove} = props;
+            const {skills} = values
+
+            return (
+
+                <div className="skills">
+                    {
+                        skills.map((name, index) => {
+                            return (
+                                <div key={index}>
+                                    <label htmlFor={`skill_${index}`}
+                                           className="form-label fw-bold">Skill
+                                        - {index + 1}</label>
+                                    <div className="d-flex skill">
+                                        <CFeild name={`skills[${index}]`}
+                                                id={`skill_${index}`}
+                                                className="form-control"></CFeild>
+
+                                        <Button type="button"
+                                                className={"btn btn-primary actions"}
+                                                onClick={() => push(index)}> + </Button>
+                                        <Button type="button"
+                                                className={"btn btn-danger actions"}
+                                                onClick={() => {
+                                                    remove(index)
+                                                }}> - </Button>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+
+                </div>
+            )
+        }
+    }
+</CFormArray>
+
+```
+
+![image](./public/images/img-3.png)
+
